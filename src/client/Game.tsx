@@ -6,7 +6,15 @@ import { StateMsg } from './view.js';
 /** How long the winning card stays highlighted before the trick flies to the winner. */
 const SWEEP_DELAY_MS = 1150;
 
-export function Game({ state, send }: { state: StateMsg; send: (msg: object) => void }) {
+export function Game({
+  state,
+  send,
+  onLeave
+}: {
+  state: StateMsg;
+  send: (msg: object) => void;
+  onLeave: () => void;
+}) {
   const [showScores, setShowScores] = useState(false);
   const stripRef = useRef<HTMLDivElement>(null);
   const trickRef = useRef<HTMLDivElement>(null);
@@ -175,7 +183,7 @@ export function Game({ state, send }: { state: StateMsg; send: (msg: object) => 
       )}
 
       {(state.phase === 'handEnd' || state.phase === 'gameEnd') && (
-        <HandSummary state={state} send={send} />
+        <HandSummary state={state} send={send} onLeave={onLeave} />
       )}
 
       {showScores && <ScoreHistory state={state} onClose={() => setShowScores(false)} />}
@@ -241,7 +249,15 @@ function ScoreHistory({ state, onClose }: { state: StateMsg; onClose: () => void
   );
 }
 
-function HandSummary({ state, send }: { state: StateMsg; send: (msg: object) => void }) {
+function HandSummary({
+  state,
+  send,
+  onLeave
+}: {
+  state: StateMsg;
+  send: (msg: object) => void;
+  onLeave: () => void;
+}) {
   const players = state.players!;
   const last = state.history![state.history!.length - 1];
   const gameOver = state.phase === 'gameEnd';
@@ -293,7 +309,7 @@ function HandSummary({ state, send }: { state: StateMsg; send: (msg: object) => 
             <p className="muted">Waiting for the host to deal the next hand…</p>
           ))}
         {gameOver && (
-          <button className="btn btn-primary" onClick={() => (location.href = '/')}>
+          <button className="btn btn-primary" onClick={onLeave}>
             Back to home
           </button>
         )}

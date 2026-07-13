@@ -25,6 +25,8 @@ export function App() {
   const onMessage = useCallback(
     (msg: ServerMsg) => {
       if (msg.type === 'state') {
+        // Ignore stragglers from a room we've already left.
+        if (!roomRef.current || msg.roomCode !== roomRef.current) return;
         setState(msg);
       } else if (msg.type === 'joined') {
         roomRef.current = msg.roomCode;
@@ -62,6 +64,13 @@ export function App() {
     history.replaceState(null, '', '/');
   };
 
+  const leave = () => {
+    socket.send({ type: 'leave' });
+    roomRef.current = null;
+    sessionStorage.removeItem('thab_room');
+    setState(null);
+  };
+
   let screen;
   if (!state) {
     screen = (
@@ -75,7 +84,7 @@ export function App() {
   } else if (state.phase === 'lobby') {
     screen = <Lobby state={state} send={socket.send} />;
   } else {
-    screen = <Game state={state} send={socket.send} />;
+    screen = <Game state={state} send={socket.send} onLeave={leave} />;
   }
 
   return (

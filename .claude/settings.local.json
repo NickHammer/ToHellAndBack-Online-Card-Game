@@ -4,7 +4,8 @@
       "WebFetch(domain:www.trickstercards.com)",
       "PowerShell(npm test *)",
       "PowerShell(npm start *)",
-      "PowerShell(Copy-Item *)"
+      "PowerShell(Copy-Item *)",
+      "PowerShell(npm run *)"
     ]
   }
 }

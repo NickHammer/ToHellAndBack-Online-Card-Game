@@ -10,6 +10,8 @@ const send = (msg: object) => ws.send(JSON.stringify({ ...msg, token: 'e2e-human
 let handsSeen = new Set<number>();
 let lastPhase = '';
 let acted = ''; // dedupe key so we don't double-act on rebroadcasts
+let stage: 'playing' | 'left' = 'playing';
+let firstRoom = '';
 
 const timeout = setTimeout(() => {
   console.error('TIMEOUT: game did not finish. Last phase: ' + lastPhase);
@@ -27,6 +29,14 @@ ws.on('message', (raw) => {
     process.exit(1);
   }
   if (msg.type === 'joined') {
+    if (stage === 'left') {
+      if (msg.roomCode === firstRoom) {
+        console.error('FAIL: new game reused the old room');
+        process.exit(1);
+      }
+      return;
+    }
+    firstRoom = msg.roomCode;
     send({ type: 'addBot' });
     setTimeout(() => send({ type: 'start' }), 50);
     return;
@@ -34,8 +44,21 @@ ws.on('message', (raw) => {
   if (msg.type !== 'state') return;
   lastPhase = msg.phase;
 
+  if (stage === 'left') {
+    // After leaving, the only state we should ever see is the new room's lobby.
+    if (msg.roomCode === firstRoom) {
+      console.error('FAIL: still receiving state from the room we left');
+      process.exit(1);
+    }
+    if (msg.phase === 'lobby') {
+      clearTimeout(timeout);
+      console.log('Leave + new game OK. E2E PASS');
+      process.exit(0);
+    }
+    return;
+  }
+
   if (msg.phase === 'gameEnd') {
-    clearTimeout(timeout);
     const scores = msg.players.map((p: any) => `${p.name}: ${p.score}`).join(', ');
     console.log(`GAME COMPLETE — ${handsSeen.size} hands played. Final: ${scores}`);
     if (handsSeen.size !== 19) {
@@ -50,8 +73,15 @@ ws.on('message', (raw) => {
         process.exit(1);
       }
     }
-    console.log('All hands consistent. E2E PASS');
-    process.exit(0);
+    console.log('All hands consistent. Now testing leave + new game…');
+    // Regression test for the "Back to home" loop: leave, then start fresh.
+    stage = 'left';
+    send({ type: 'leave' });
+    setTimeout(
+      () => send({ type: 'create', name: 'E2E2', seatCount: 2, hookRule: false, takeSeat: true }),
+      200
+    );
+    return;
   }
 
   if (msg.handIndex !== undefined) handsSeen.add(msg.handIndex);

@@ -101,9 +101,20 @@ wss.on('connection', (ws: AliveSocket) => {
     }
     const token = msg.token || randomBytes(12).toString('hex');
 
+    // Attaching to a room (create/join) always detaches from any previous one,
+    // so a connection never receives two rooms' broadcasts.
+    const detach = () => {
+      if (room && conn) {
+        room.dropConnection(conn);
+        room = null;
+        conn = null;
+      }
+    };
+
     try {
       switch (msg.type) {
         case 'create': {
+          detach();
           const seatCount = Math.min(4, Math.max(2, msg.seatCount ?? 2));
           const code = newRoomCode();
           room = new Room(code, { seatCount, hookRule: msg.hookRule ?? false }, token);
@@ -118,6 +129,7 @@ wss.on('connection', (ws: AliveSocket) => {
           const code = (msg.roomCode ?? '').toUpperCase().trim();
           const target = rooms.get(code);
           if (!target) return fail(`No game found with code ${code}`);
+          detach();
           room = target;
           conn = room.addConnection(ws, token);
           // Spectate (table display) or take a seat.
@@ -126,6 +138,9 @@ wss.on('connection', (ws: AliveSocket) => {
           room.broadcast();
           break;
         }
+        case 'leave':
+          detach();
+          break;
         case 'addBot':
           requireHost(room, conn);
           room!.addBot();
