@@ -28,7 +28,7 @@ export const RELICS: Record<RelicId, RelicDef> = {
     id: 'loadedDie',
     name: 'Loaded Die',
     flavor: 'It always lands the way the pit reads.',
-    effect: 'See the trump card while bidding. (Normally it stays face-down until bids are locked — the demons already know it.)',
+    effect: 'See the trump card while bidding on deep hands (4+ cards), where it normally stays face-down until bids are locked. The demons already know it.',
     tier: 'common',
     cost: 8
   },

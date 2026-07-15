@@ -2,7 +2,7 @@
  * The Descent: single-player roguelite run. Entirely client-side — the run
  * lives in localStorage, hands are played by useLocalHand against ai.ts demons.
  */
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DEMONS } from '../../rogue/demons.js';
 import { RELICS, RelicId } from '../../rogue/relics.js';
 import {
@@ -13,6 +13,7 @@ import {
   HEAL_COST,
   leaveShop,
   newRun,
+  Region,
   resolveHand,
   RunState,
   STOP_COUNT,
@@ -80,7 +81,53 @@ export function RunApp() {
     );
   }
 
-  return <div className={`rogue rogue-${region}`}>{view}</div>;
+  return (
+    <div className={`rogue rogue-${region}`}>
+      <Backdrop region={region} depth={run?.stopIndex ?? 0} />
+      <div className="rogue-content">{view}</div>
+    </div>
+  );
+}
+
+/**
+ * Ambient region effects: embers rise in hell (thicker and faster the deeper
+ * you are), violet sparks sink into the void at the bottom, golden motes and
+ * god-rays drift in heaven. Pure CSS animation — transform/opacity only.
+ */
+function Backdrop({ region, depth }: { region: Region; depth: number }) {
+  const particles = useMemo(() => {
+    const count = region === 'hell' ? 14 + depth * 3 : region === 'bottom' ? 30 : 20;
+    const speedup = region === 'hell' ? Math.min(depth * 0.4, 3.5) : 0;
+    return Array.from({ length: count }, () => ({
+      left: Math.random() * 100,
+      delay: -Math.random() * 16,
+      duration: (region === 'heaven' ? 16 : 9) + Math.random() * 8 - speedup,
+      size: 2 + Math.random() * (region === 'heaven' ? 3 : 4),
+      drift: (Math.random() - 0.5) * 140
+    }));
+  }, [region, depth]);
+
+  return (
+    <div className={`rogue-backdrop rogue-backdrop-${region}`} aria-hidden="true">
+      {region === 'heaven' && <div className="rogue-rays" />}
+      {region !== 'heaven' && <div className="rogue-glow-floor" />}
+      {region === 'bottom' && <div className="rogue-voidpulse" />}
+      {particles.map((p, i) => (
+        <span
+          key={i}
+          className="rogue-particle"
+          style={{
+            left: `${p.left}%`,
+            width: `${p.size}px`,
+            height: `${p.size}px`,
+            animationDelay: `${p.delay}s`,
+            animationDuration: `${p.duration}s`,
+            ['--drift' as string]: `${p.drift}px`
+          }}
+        />
+      ))}
+    </div>
+  );
 }
 
 function LazyHand({
@@ -119,7 +166,10 @@ function StartView({ onStart }: { onStart: () => void }) {
         <ul className="rogue-ruleslist">
           <li>One hand per stop: 1 card at Circle 1, 10 at The Bottom, back to 1 at the last sphere.</li>
           <li>Make your bid exactly to pass. Miss and you lose <b>grace</b> — at 0, the run ends.</li>
-          <li>The trump card stays <b>face-down while you bid</b>. The demons can see it. Relics help.</li>
+          <li>
+            On hands of <b>4+ cards</b> the trump stays <b>face-down while you bid</b> — the
+            demons can see it. Small hands play fair. Relics help.
+          </li>
           <li>Made bids earn <b>souls</b>; shops every third gate sell relics and grace.</li>
           <li>Each table's demon warps one rule — it's shown before you play.</li>
         </ul>

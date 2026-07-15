@@ -81,6 +81,15 @@ export function soulsForClear(bid: number, isBoss: boolean): number {
 }
 
 /**
+ * The light fails as you descend: on hands of 4+ cards the trump stays
+ * face-down while you bid (the demons can see it). Small hands play fair —
+ * a blind 1-card bid is a coin flip, and coin-flip deaths feel unearned.
+ */
+export function isTrumpBlind(handSize: number): boolean {
+  return handSize >= 4;
+}
+
+/**
  * Apply the outcome of a played hand at the current stop.
  * Made bid → advance (into shop/won as appropriate). Missed → lose grace
  * (Usurer ×2; Cracked Halo forgives a miss-by-one) and retry the same stop.

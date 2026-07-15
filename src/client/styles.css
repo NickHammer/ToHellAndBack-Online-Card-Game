@@ -985,7 +985,6 @@ input[type='text'],
    for the full theme swap — real art comes later. */
 .rogue {
   min-height: 100vh;
-  margin: -12px;
   padding: 12px;
 }
 
@@ -1138,6 +1137,246 @@ input[type='text'],
   text-align: center;
   text-decoration: none;
   display: block;
+}
+
+/* ----- ambient backdrop (embers / void / light) ----- */
+
+.rogue {
+  position: relative;
+  overflow: hidden;
+}
+
+.rogue-content {
+  position: relative;
+  z-index: 1;
+}
+
+.rogue-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.rogue-particle {
+  position: absolute;
+  top: 100%;
+  border-radius: 50%;
+  will-change: transform, opacity;
+}
+
+.rogue-backdrop-hell .rogue-particle {
+  background: #ffb163;
+  box-shadow: 0 0 6px 2px rgba(255, 122, 40, 0.75), 0 0 14px 4px rgba(255, 60, 0, 0.3);
+  animation: ember-rise linear infinite;
+}
+
+.rogue-backdrop-bottom .rogue-particle {
+  top: -2%;
+  background: #d98cf0;
+  box-shadow: 0 0 6px 2px rgba(213, 74, 224, 0.6), 0 0 14px 4px rgba(120, 20, 160, 0.35);
+  animation: void-sink linear infinite;
+}
+
+.rogue-backdrop-heaven .rogue-particle {
+  background: #ffe9a8;
+  box-shadow: 0 0 8px 3px rgba(255, 211, 92, 0.5), 0 0 18px 6px rgba(255, 240, 200, 0.18);
+  animation: mote-rise ease-in-out infinite;
+}
+
+@keyframes ember-rise {
+  0% {
+    transform: translate(0, 3vh) scale(1);
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(var(--drift, 0px), -108vh) scale(0.4);
+    opacity: 0;
+  }
+}
+
+@keyframes void-sink {
+  0% {
+    transform: translate(0, -3vh) scale(1);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.9;
+  }
+  100% {
+    transform: translate(var(--drift, 0px), 108vh) scale(0.5);
+    opacity: 0;
+  }
+}
+
+@keyframes mote-rise {
+  0% {
+    transform: translate(0, 3vh) scale(0.8);
+    opacity: 0;
+  }
+  15% {
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translate(var(--drift, 0px), -108vh) scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* a hot glow rising from the bottom of the screen in hell / the void */
+.rogue-glow-floor {
+  position: absolute;
+  left: -10%;
+  right: -10%;
+  bottom: -12vh;
+  height: 34vh;
+  background: radial-gradient(ellipse at 50% 100%, rgba(255, 96, 24, 0.32) 0%, transparent 70%);
+  animation: floor-breathe 5s ease-in-out infinite;
+}
+
+.rogue-backdrop-bottom .rogue-glow-floor {
+  background: radial-gradient(ellipse at 50% 100%, rgba(160, 40, 190, 0.3) 0%, transparent 70%);
+}
+
+@keyframes floor-breathe {
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: scaleY(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleY(1.18);
+  }
+}
+
+/* slowly sweeping god-rays in heaven */
+.rogue-rays {
+  position: absolute;
+  left: 50%;
+  top: -60vh;
+  width: 200vw;
+  height: 200vh;
+  transform: translateX(-50%);
+  background: conic-gradient(
+    from 0deg at 50% 0%,
+    transparent 0deg,
+    rgba(255, 226, 140, 0.07) 8deg,
+    transparent 18deg,
+    rgba(255, 226, 140, 0.05) 30deg,
+    transparent 42deg,
+    rgba(255, 226, 140, 0.08) 55deg,
+    transparent 70deg,
+    rgba(255, 226, 140, 0.05) 84deg,
+    transparent 100deg
+  );
+  animation: rays-sweep 26s ease-in-out infinite alternate;
+}
+
+@keyframes rays-sweep {
+  from {
+    transform: translateX(-50%) rotate(-8deg);
+  }
+  to {
+    transform: translateX(-50%) rotate(8deg);
+  }
+}
+
+/* the void breathes */
+.rogue-voidpulse {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 50%, transparent 40%, rgba(10, 0, 14, 0.85) 100%);
+  animation: void-breathe 7s ease-in-out infinite;
+}
+
+@keyframes void-breathe {
+  0%,
+  100% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+/* ----- flame-lit chrome ----- */
+
+.rogue-hell .title,
+.rogue-bottom .title {
+  animation: flame-flicker 3.2s ease-in-out infinite;
+}
+
+@keyframes flame-flicker {
+  0%,
+  100% {
+    text-shadow: 0 0 14px rgba(255, 130, 40, 0.55), 0 0 42px rgba(255, 80, 0, 0.28);
+  }
+  35% {
+    text-shadow: 0 0 20px rgba(255, 150, 60, 0.75), 0 0 60px rgba(255, 90, 10, 0.4);
+  }
+  55% {
+    text-shadow: 0 0 12px rgba(255, 120, 30, 0.5), 0 0 36px rgba(255, 70, 0, 0.24);
+  }
+  75% {
+    text-shadow: 0 0 22px rgba(255, 160, 70, 0.8), 0 0 66px rgba(255, 100, 20, 0.45);
+  }
+}
+
+.rogue-heaven .title {
+  text-shadow: 0 0 18px rgba(255, 222, 120, 0.6), 0 0 56px rgba(255, 240, 190, 0.3);
+}
+
+.rogue .btn-primary {
+  box-shadow: 0 0 16px color-mix(in srgb, var(--accent) 40%, transparent);
+  animation: button-smolder 3s ease-in-out infinite;
+}
+
+@keyframes button-smolder {
+  0%,
+  100% {
+    box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 24px color-mix(in srgb, var(--accent) 55%, transparent);
+  }
+}
+
+.rogue .table-felt {
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.35), 0 0 34px color-mix(in srgb, var(--accent) 18%, transparent);
+  border-color: color-mix(in srgb, var(--accent) 30%, #1a0d08);
+}
+
+/* flame-backed card back for the face-down trump */
+.rogue-card-back {
+  background:
+    radial-gradient(circle at 50% 82%, rgba(255, 140, 40, 0.55) 0%, transparent 45%),
+    radial-gradient(circle at 30% 30%, rgba(255, 90, 20, 0.25) 0%, transparent 50%),
+    repeating-linear-gradient(45deg, #3a1410 0 5px, #571f16 5px 10px);
+  border: 1px solid #8a4a2e;
+  box-shadow: 0 0 12px rgba(255, 110, 30, 0.35);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rogue-particle,
+  .rogue-rays,
+  .rogue-voidpulse,
+  .rogue-glow-floor,
+  .rogue-hell .title,
+  .rogue-bottom .title,
+  .rogue .btn-primary {
+    animation: none;
+  }
 }
 
 /* ---------- toasts ---------- */

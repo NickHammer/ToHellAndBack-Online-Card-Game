@@ -1,6 +1,6 @@
 import { DEMONS } from '../../rogue/demons.js';
 import { RelicId } from '../../rogue/relics.js';
-import { StopDef } from '../../rogue/run.js';
+import { isTrumpBlind, StopDef } from '../../rogue/run.js';
 import { SUIT_GLYPHS, SUIT_NAMES } from '../../shared/types.js';
 import { CardView } from '../components.js';
 import { useLocalHand } from './useLocalHand.js';
@@ -27,7 +27,7 @@ export function HandView({
   const demon = DEMONS[stop.demonId];
   const bidding = state.phase === 'bidding';
   const myTurn = state.turn === 0;
-  const trumpHidden = bidding && !relics.includes('loadedDie');
+  const trumpHidden = bidding && isTrumpBlind(stop.handSize) && !relics.includes('loadedDie');
   const hideBids = stop.demonId === 'liar' && !hand.result;
   const hideTaken = stop.demonId === 'hoarder' && !hand.result;
 

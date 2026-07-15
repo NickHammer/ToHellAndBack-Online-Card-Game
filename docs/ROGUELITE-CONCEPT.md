@@ -97,9 +97,11 @@ Built and verified (33 tests incl. headless full runs; driven end-to-end in a br
 - **Client** (`src/client/rogue/`): `useLocalHand` runs the engine + `ai.ts` demons fully
   in-browser on timers (no server); map / shop / hand / death / paradise screens; run
   persists in localStorage; region palettes (hell/bottom/heaven) as placeholder theming.
-- **New base rule** (design call made during the build): in the roguelite the trump card
+- **New base rule** (design call made during the build): on hands of **4+ cards** the trump
   stays **face-down while you bid** — the demons can see it, you can't. This is what makes
   information relics (Loaded Die) worth buying; the multiplayer game is unchanged.
+  (Tuned after first playtests: fully-blind 1–2 card hands were coin flips and killed runs
+  at Circle 2 through no fault of the player, so small hands now show the trump.)
 - Launch demons: Imp (none), Liar (demon bids hidden), Hoarder (demon tricks hidden),
   Usurer (misses cost 2 grace), Adversary boss (trump shifts every 3 tricks).
 - Numbers (all untuned first guesses): grace 3, souls = 3 + bid (+8 boss bounty),

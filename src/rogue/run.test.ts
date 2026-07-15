@@ -8,6 +8,7 @@ import {
   buildTrack,
   buyHeal,
   buyRelic,
+  isTrumpBlind,
   leaveShop,
   newRun,
   resolveHand,
@@ -31,6 +32,13 @@ describe('track', () => {
     expect(track.filter((s) => s.shopAfter).map((s) => s.index)).toEqual([2, 5, 8, 11, 14, 17]);
     // demons respect their minimum depth
     expect(track[0].demonId).toBe('imp'); // only demon allowed at stop 0
+  });
+
+  it('keeps small hands fair: blind bidding starts at 4 cards', () => {
+    expect(isTrumpBlind(1)).toBe(false);
+    expect(isTrumpBlind(3)).toBe(false);
+    expect(isTrumpBlind(4)).toBe(true);
+    expect(isTrumpBlind(10)).toBe(true);
   });
 
   it('is deterministic for a seed', () => {
