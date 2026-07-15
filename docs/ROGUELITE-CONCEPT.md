@@ -1,8 +1,10 @@
-# To Hell and Back: Roguelite Mode — Concept Exploration
+# To Hell and Back: Roguelite — Concept
 
-*Exploration branch. Nothing here is committed design; it's a thinking space for a
-single-player, run-based mode built on the existing Oh Hell engine
-(`src/shared/engine.ts` + `src/shared/ai.ts`).*
+*Exploration branch for a single-player, run-based roguelite built on the existing
+Oh Hell engine (`src/shared/engine.ts` + `src/shared/ai.ts`). **Direction decided
+2026-07-15** (see Decisions at the bottom): this is its own product — it diverges from
+`main` permanently and ships as a separate site, while the multiplayer Oh Hell game
+stays where it is.*
 
 ## The pitch
 
@@ -86,13 +88,25 @@ judgment under uncertainty, so power = better information or softer punishment, 
 - Single-player only at first — no server needed; the whole run can live client-side,
   which also means it works offline and costs nothing to host.
 
-## Open questions
+## Decisions (2026-07-15)
 
-- Does one hand per circle feel too thin? Alternative: best-of-3 tricks-style "duels"
-  in early circles, full hands deeper.
-- Trump manipulation as the relic axis vs. bid tolerance as the relic axis — pick one
-  as primary, or the pool feels mushy.
-- Art/tone: keep the felt-table look with hellish palette shifts per circle (cheap,
-  atmospheric), or full theme swap?
-- Name: "To Hell and Back" already *is* the roguelite name. The base game could become
-  "table mode" within it.
+The former open questions, answered:
+
+1. **Pacing — one hand per stop.** 19 stops, ~25-minute runs. Grace absorbs the early
+   variance: a missed 1-card bid at circle 1 costs 1 grace, so the coin-flippy openers
+   are low-stakes warmup, and the iconic 1-card opener/closer stays.
+
+2. **Relic axis — information is primary.** Most relics improve what you know (peek at
+   trump, count played trumps, see demon bids). The bid-judgment core stays intact —
+   you still have to be right, you're just better armed. Bid-tolerance relics
+   (miss-by-one, grace shields) are the rare/legendary tier, never common.
+
+3. **Art/tone — full theme swap.** New backgrounds, card backs, and UI chrome per
+   region (hell / the bottom / heaven). A real art commitment, chosen deliberately
+   because of #4: this is a standalone product, not a reskin of the multiplayer table.
+
+4. **Positioning — the roguelite is the headline product, and a separate site.**
+   It fully diverges from `main`, which remains the multiplayer Oh Hell game and keeps
+   its SEO identity. Two sites at the end. This branch is the divergence point: shared
+   engine code gets copied/extracted as needed, with no obligation to stay compatible
+   with `main`.
